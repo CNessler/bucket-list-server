@@ -33,5 +33,10 @@ router.post('/login', function (req, res, next) {
   })
 })
 
+router.post('/insert', function (req, res, next) {
+  console.log(req.body, "THIS IS THE BODY");
+  Users.update({_id: req.body._id}, {$push: {lists: {location: req.body.location, title: req.body.title, description: req.body.description, image: req.body.image}}})
+})
+
 
 module.exports = router;
