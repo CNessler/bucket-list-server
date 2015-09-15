@@ -21,6 +21,7 @@ router.post('/signup', function(req, res, next) {
 
 router.post('/login', function (req, res, next) {
   return databaseQueries.login(req.body).then(function (foundUser) {
+    console.log(foundUser, 'should be lots of things');
     if(foundUser.foundUser){
       loggedIn =  true;
       res.json({user: foundUser, loggedIn: loggedIn})
@@ -42,7 +43,7 @@ router.post('/profile', function (req, res, next) {
 
 router.post('/search', function (req, res, next) {
   var search = req.body.letters;
-  Users.find({userFirst: {'$regex': search}}).then(function (results) {
+  databaseQueries.search(search).then(function (results) {
     res.json({foundFriends: results})
   })
 })
@@ -58,7 +59,6 @@ router.get('/friend', function (req, res, next) {
     results.foundItems = foundItems
     return results
   }).then(function (results) {
-    console.log(results, 'should be object');
     res.json({foundFriend: results})
   })
 })
@@ -70,13 +70,19 @@ router.post('/addFriend', function (req, res, next) {
 
 router.post('/addToFriends', function (req, res, next) {
   databaseQueries.addToFriends(req.body).then(function (updatedUser) {
+    console.log(updatedUser, 'please not a number');
     res.json({user: updatedUser})
   })
 })
 
 router.post('/addLike', function (req, res, next) {
   databaseQueries.addLike(req.body).then(function (item) {
-    console.log(item, 'should have more likes');
+  })
+})
+
+router.post('/removePending', function (req, res, next) {
+  databaseQueries.removePending(req.body).then(function (updatedUser) {
+    res.json({user:updatedUser})
   })
 })
 module.exports = router;
