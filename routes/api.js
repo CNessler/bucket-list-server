@@ -64,13 +64,15 @@ router.get('/friend', function (req, res, next) {
 })
 
 router.post('/addFriend', function (req, res, next) {
-  databaseQueries.addFriend(req.body);
+  databaseQueries.addFriend(req.body).then(function (updatedUser) {
+    console.log(updatedUser, 'db side');
+    res.json({user: updatedUser})
+  })
 })
 
 
 router.post('/addToFriends', function (req, res, next) {
   databaseQueries.addToFriends(req.body).then(function (updatedUser) {
-    console.log(updatedUser, 'please not a number');
     res.json({user: updatedUser})
   })
 })
@@ -85,4 +87,11 @@ router.post('/removePending', function (req, res, next) {
     res.json({user:updatedUser})
   })
 })
+
+// router.get('/findPending', function (req, res, next) {
+//   databaseQueries.findPending(req.body).then(function (foundPending) {
+//     console.log(foundPending, 'found db side');
+//     res.json({pendingFriends: foundPending})
+//   })
+// })
 module.exports = router;
