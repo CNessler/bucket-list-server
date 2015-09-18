@@ -36,14 +36,18 @@ router.post('/insert', function (req, res, next) {
     Users.update({_id: req.body.user}, {$push: {bucket: item._id}})
   })
 })
-
+// databaseQueries.insert(dream).then(function (updatedUser) {
+//   console.log(updatedUser, "USER WITH UPDATED BUCKET");
+//   res.json({user: update})
+// })
 router.post('/profile', function (req, res, next) {
   Users.update({_id: req.body._id}, {$set: {userFirst: req.body.first, userLast: req.body.last, streetAddress: req.body.streetAddress, city: req.body.city, state: req.body.state, zipcode: req.body.zipcode, private: false, bucket: req.body.bucket, email: req.body.email}})
 })
 
 router.post('/search', function (req, res, next) {
   var search = req.body.letters;
-  databaseQueries.search(search).then(function (results) {
+  databaseQueries.searcher(search).then(function (results) {
+    console.log(results, 'results of search');
     res.json({foundFriends: results})
   })
 })
@@ -73,6 +77,7 @@ router.post('/addFriend', function (req, res, next) {
 
 router.post('/addToFriends', function (req, res, next) {
   databaseQueries.addToFriends(req.body).then(function (updatedUser) {
+    console.log(updatedUser, 'updated user object');
     res.json({user: updatedUser})
   })
 })
@@ -88,10 +93,10 @@ router.post('/removePending', function (req, res, next) {
   })
 })
 
-// router.get('/findPending', function (req, res, next) {
-//   databaseQueries.findPending(req.body).then(function (foundPending) {
-//     console.log(foundPending, 'found db side');
-//     res.json({pendingFriends: foundPending})
-//   })
-// })
+router.get('/all', function (req, res, next) {
+  databaseQueries.all().then(function (allUsers) {
+    res.json(allUsers)
+  })
+})
+
 module.exports = router;
