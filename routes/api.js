@@ -21,7 +21,6 @@ router.post('/signup', function(req, res, next) {
 
 router.post('/login', function (req, res, next) {
   return databaseQueries.login(req.body).then(function (foundUser) {
-    console.log(foundUser, 'should be lots of things');
     if(foundUser.foundUser){
       loggedIn =  true;
       res.json({user: foundUser, loggedIn: loggedIn})
@@ -32,14 +31,11 @@ router.post('/login', function (req, res, next) {
 })
 
 router.post('/insert', function (req, res, next) {
-  Items.insert(req.body).then(function (item) {
-    Users.update({_id: req.body.user}, {$push: {bucket: item._id}})
+  databaseQueries.insert(req.body).then(function (updatedUser) {
+    res.json({user:updatedUser})
   })
 })
-// databaseQueries.insert(dream).then(function (updatedUser) {
-//   console.log(updatedUser, "USER WITH UPDATED BUCKET");
-//   res.json({user: update})
-// })
+
 router.post('/profile', function (req, res, next) {
   Users.update({_id: req.body._id}, {$set: {userFirst: req.body.first, userLast: req.body.last, streetAddress: req.body.streetAddress, city: req.body.city, state: req.body.state, zipcode: req.body.zipcode, private: false, bucket: req.body.bucket, email: req.body.email}})
 })
@@ -47,7 +43,6 @@ router.post('/profile', function (req, res, next) {
 router.post('/search', function (req, res, next) {
   var search = req.body.letters;
   databaseQueries.searcher(search).then(function (results) {
-    console.log(results, 'results of search');
     res.json({foundFriends: results})
   })
 })
@@ -69,7 +64,6 @@ router.get('/friend', function (req, res, next) {
 
 router.post('/addFriend', function (req, res, next) {
   databaseQueries.addFriend(req.body).then(function (updatedUser) {
-    console.log(updatedUser, 'db side');
     res.json({user: updatedUser})
   })
 })
@@ -77,7 +71,6 @@ router.post('/addFriend', function (req, res, next) {
 
 router.post('/addToFriends', function (req, res, next) {
   databaseQueries.addToFriends(req.body).then(function (updatedUser) {
-    console.log(updatedUser, 'updated user object');
     res.json({user: updatedUser})
   })
 })
@@ -96,6 +89,13 @@ router.post('/removePending', function (req, res, next) {
 router.get('/all', function (req, res, next) {
   databaseQueries.all().then(function (allUsers) {
     res.json(allUsers)
+  })
+})
+
+router.post('/completed',function (req, res, next) {
+  databaseQueries.completed(req.body).then(function (updatedUser) {
+    console.log(updatedUser, 'user updated');
+    res.json(updatedUser)
   })
 })
 
