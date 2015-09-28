@@ -1,5 +1,6 @@
 var express = require('express');
 var router = express.Router();
+var unirest = require('unirest');
 var db = require('monk')(process.env.MONGOLAB_URI);
 var Users = db.get('users');
 var Items = db.get('items');
@@ -76,7 +77,9 @@ router.post('/addToFriends', function (req, res, next) {
 })
 
 router.post('/addLike', function (req, res, next) {
-  databaseQueries.addLike(req.body).then(function (item) {
+  console.log(req.body, 'should have likedBy ID');
+  databaseQueries.addLike(req.body).then(function (updatedUser) {
+    res.json(updatedUser)
   })
 })
 
@@ -97,6 +100,19 @@ router.post('/completed',function (req, res, next) {
     console.log(updatedUser, 'user updated');
     res.json(updatedUser)
   })
+})
+
+router.get('/state', function (req, res, next) {
+  console.log(req.query.letter, 'please please!');
+  unirest
+    .get('https://maps.googleapis.com/maps/api/place/autocomplete/json?input=' + req.query.letter + '&types=geocode&language=english&key=AIzaSyCp4oKsPZ8i_ofzoxsSw6A7rBswgmyXrJU')
+    .end(function (response) {
+      console.log(response.body, 'please work RESPONSE');
+      console.log(response.body.terms, 'TERMS');
+      console.log(response.body.types, 'TYPES');
+      res.json(response.body)
+
+    })
 })
 
 module.exports = router;
